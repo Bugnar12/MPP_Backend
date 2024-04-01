@@ -1,11 +1,11 @@
-package service;
+package org.example.service;
 
-import entity.Antivirus;
+import org.example.entity.Antivirus;
 
 import java.util.List;
 
 public interface IService {
-    List<Antivirus> getALlAntivirus();
+    List<Antivirus> getAllAntivirus();
     Antivirus getAntivirusById(int id);
     void addAntivirus(Antivirus antivirus);
     void updateAntivirus(int id, Antivirus updatedAntvirus);

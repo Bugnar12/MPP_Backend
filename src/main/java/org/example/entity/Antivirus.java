@@ -1,5 +1,6 @@
-package entity;
+package org.example.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +17,5 @@ public class Antivirus {
     private String producer;
     private String description;
     private boolean supportMultiPlatform;
-    private Date releaseDate;
+    private SimpleDateFormat releaseDate;
 }

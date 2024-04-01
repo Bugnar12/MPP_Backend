@@ -1,14 +1,15 @@
-package controller;
+package org.example.controller;
 
-import entity.Antivirus;
+import org.example.entity.Antivirus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import service.AntivirusServiceImpl;
+import org.example.service.AntivirusServiceImpl;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/antiviruses")
+@RequestMapping("/")
 public class AntivirusController {
 
     @Autowired
@@ -18,11 +19,11 @@ public class AntivirusController {
     {
         this.antivirusService = antivirusService;
     }
-    @GetMapping
+    @GetMapping("/antivirusList")
     public List<Antivirus> getAllAntiviruses(){
-        return antivirusService.getALlAntivirus();
+        return antivirusService.getAllAntivirus();
     }
-    @GetMapping("/{id}")
+    @GetMapping("antivirusList/{id}")
     public Antivirus getAntivirusById(@PathVariable int id){
         return antivirusService.getAntivirusById(id);
     }
