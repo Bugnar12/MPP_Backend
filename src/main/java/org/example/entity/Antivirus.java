@@ -17,5 +17,17 @@ public class Antivirus {
     private String producer;
     private String description;
     private boolean supportMultiPlatform;
-    private SimpleDateFormat releaseDate;
+    private Date releaseDate;
+
+    @Override
+    public String toString() {
+        return "Antivirus{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", producer='" + producer + '\'' +
+                ", description='" + description + '\'' +
+                ", supportMultiPlatform=" + supportMultiPlatform +
+                ", releaseDate=" + releaseDate +
+                '}';
+    }
 }
