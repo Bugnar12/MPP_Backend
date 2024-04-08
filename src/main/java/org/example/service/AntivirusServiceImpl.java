@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.github.javafaker.Faker;
 
 @Service
 public class AntivirusServiceImpl implements IService{
@@ -16,6 +19,14 @@ public class AntivirusServiceImpl implements IService{
 
     public AntivirusServiceImpl(){
         try {
+            Faker faker = new Faker();
+            for(int i = 0; i < 100; i++)
+            {
+                Antivirus generatedAntivirus = generateRandomAntivirus(faker);
+                addAntivirus(generatedAntivirus);
+            }
+
+            //--------------------
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             antivirusList.add(new Antivirus(1, "Kaspersky", "Kaspersky Lab", "Kaspersky Lab is a multinational cybersecurity and anti-virus provider headquartered in Moscow, Russia and operated by a holding company in the United Kingdom.", true, format.parse("2020-01-01")));
             antivirusList.add(new Antivirus(2, "Bitdefender", "Bitdefender", "Bitdefender is a Romanian cybersecurity and anti-virus software company.", true, format.parse("2001-11-06")));
@@ -30,6 +41,16 @@ public class AntivirusServiceImpl implements IService{
         {
             e.printStackTrace();
         }
+    }
+
+    private Antivirus generateRandomAntivirus(Faker faker) {
+        String name = faker.app().name();
+        String producer = faker.company().name();
+        String description = faker.lorem().sentence();
+        boolean supportMultiPlatform = faker.bool().bool();
+        Date releaseDate = faker.date().past(10, TimeUnit.DAYS);
+
+        return new Antivirus(0, name, producer, description, supportMultiPlatform, releaseDate);
     }
 
     @Override
