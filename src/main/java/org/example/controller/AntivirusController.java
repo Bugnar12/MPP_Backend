@@ -1,24 +1,34 @@
 package org.example.controller;
+import org.example.config.WebSocketConfig;
 
 import org.example.entity.Antivirus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.example.service.AntivirusServiceImpl;
+import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
-@RestController
-@RequestMapping("/")
+
+@Controller
+@CrossOrigin(origins = "http://localhost:3000")
 public class AntivirusController {
     private static final Logger logger = LoggerFactory.getLogger(AntivirusController.class);
 
     @Autowired
     private AntivirusServiceImpl antivirusService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     public AntivirusController(AntivirusServiceImpl antivirusService)
     {
@@ -26,9 +36,10 @@ public class AntivirusController {
     }
 
     @GetMapping("/antivirusList")
-    public List<Antivirus> getAllAntiviruses(){
+    public ResponseEntity<List<Antivirus>> getAllAntiviruses(){
         logger.info("Getting all antiviruses\n");
-        return antivirusService.getAllAntivirus();
+        List<Antivirus> antivirusList = antivirusService.getAllAntivirus();
+        return ResponseEntity.ok(antivirusList);
     }
 
     @GetMapping("antivirusList/{id}")
@@ -65,6 +76,8 @@ public class AntivirusController {
         }
 
         antivirusService.addAntivirus(antivirus);
+
+
         logger.info("Adding antivirus: " + antivirus + "\n");
         return ResponseEntity.ok("Antivirus added successfully.");
     }
@@ -102,5 +115,20 @@ public class AntivirusController {
     public void deleteAntivirus(@PathVariable int id){
         antivirusService.deleteAntivirus(id);
         logger.info("Deleting antivirus with id: " + id + "\n");
+    }
+
+    @MessageMapping("/broadcast")
+    @SendTo("/topic/reply")
+
+    public String broadcastMessage(@Payload String message)
+    {
+        return "Recieved message " + message;
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void sendAntivirusPeriodically()
+    {
+        Antivirus generatedAntivirus = antivirusService.generateAndAddAntivirus();
+        simpMessagingTemplate.convertAndSend("/topic/antivirus", generatedAntivirus);
     }
 }

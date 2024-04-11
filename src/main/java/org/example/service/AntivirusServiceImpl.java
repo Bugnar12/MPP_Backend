@@ -20,24 +20,13 @@ public class AntivirusServiceImpl implements IService{
     public AntivirusServiceImpl(){
         try {
             Faker faker = new Faker();
-            for(int i = 0; i < 100; i++)
+            for(int i = 0; i < 5; i++)
             {
                 Antivirus generatedAntivirus = generateRandomAntivirus(faker);
                 addAntivirus(generatedAntivirus);
             }
-
-            //--------------------
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            antivirusList.add(new Antivirus(1, "Kaspersky", "Kaspersky Lab", "Kaspersky Lab is a multinational cybersecurity and anti-virus provider headquartered in Moscow, Russia and operated by a holding company in the United Kingdom.", true, format.parse("2020-01-01")));
-            antivirusList.add(new Antivirus(2, "Bitdefender", "Bitdefender", "Bitdefender is a Romanian cybersecurity and anti-virus software company.", true, format.parse("2001-11-06")));
-            antivirusList.add(new Antivirus(3, "Avast", "Avast Software", "Avast is a Czech multinational cybersecurity software company headquartered in Prague, Czech Republic.", true, format.parse("2010-10-10")));
-            antivirusList.add(new Antivirus(4, "Norton", "NortonLifeLock", "NortonLifeLock Inc. is an American software company headquartered in Tempe, Arizona, United States.", true, format.parse("2016-01-01")));
-            antivirusList.add(new Antivirus(5, "ESET", "ESET", "ESET is a Slovak internet security company that offers anti-virus and firewall products.", false, format.parse("2017-01-01")));
-            antivirusList.add(new Antivirus(6, "McAfee", "McAfee", "McAfee, LLC is an American global computer security software company headquartered in Santa Clara, California.", true, format.parse("2006-01-01")));
-            nextId = antivirusList.size() + 1; //so we add the next antivirus with the next id
-            System.out.println(antivirusList.size());
         }
-        catch(ParseException e)
+        catch(Exception e)
         {
             e.printStackTrace();
         }
@@ -88,4 +77,11 @@ public class AntivirusServiceImpl implements IService{
                 antivirusList.remove(antivirus);
             }
         }
+
+    public Antivirus generateAndAddAntivirus() {
+        Faker faker = new Faker();
+        Antivirus generatedAntivirus = generateRandomAntivirus(faker);
+        addAntivirus(generatedAntivirus);
+        return generatedAntivirus;
+    }
 }
