@@ -112,9 +112,14 @@ public class AntivirusController {
     }
 
     @DeleteMapping("antivirusList/{id}")
-    public void deleteAntivirus(@PathVariable int id){
-        antivirusService.deleteAntivirus(id);
-        logger.info("Deleting antivirus with id: " + id + "\n");
+    public ResponseEntity<Void> deleteAntivirus(@PathVariable int id){
+        try {
+            antivirusService.deleteAntivirus(id);
+            logger.info("Deleting antivirus with id: " + id + "\n");
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @MessageMapping("/broadcast")

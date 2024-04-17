@@ -76,6 +76,9 @@ public class AntivirusServiceImpl implements IService{
             if(antivirus != null){
                 antivirusList.remove(antivirus);
             }
+            else{
+                throw new RuntimeException("Antivirus not found");
+            }
         }
 
     public Antivirus generateAndAddAntivirus() {
