@@ -1,7 +1,7 @@
 package org.example.controller;
 
-import org.example.entity.Antivirus;
-import org.example.service.AntivirusServiceImpl;
+import org.backendspring_boot.backendspring_boot.entity.Antivirus;
+import org.backendspring_boot.backendspring_boot.service.AntivirusServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
 
-import org.example.controller.AntivirusController;
+import org.backendspring_boot.backendspring_boot.controller.AntivirusController;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;

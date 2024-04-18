@@ -1,4 +1,4 @@
-package org.example.config;
+package org.backendspring_boot.backendspring_boot.config;
 
 import org.backendspring_boot.backendspring_boot.BackendSpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
