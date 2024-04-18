@@ -9,6 +9,6 @@ public interface ICustomerService {
     List<Customer> getAllCustomers();
     Customer getCustomerById(Long id) throws RepositoryException;
     void addCustomer(Customer customer);
-    void updateCustomer(Long id, Customer updatedCustomer) throws RepositoryException;
+    Customer updateCustomer(Long id, Customer updatedCustomer) throws RepositoryException;
     void deleteCustomer(Long id) throws RepositoryException;
 }

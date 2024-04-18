@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @Entity
@@ -16,24 +20,30 @@ public class Antivirus {
     @Column(name = "id" , updatable = false)
     private Long id;
 
+    @NotBlank(message = "Name is required")
     @Column(name="name", nullable = false)
     private String name;
 
+    @NotBlank(message = "Producer is required")
     @Column(name="producer", nullable = false)
     private String producer;
 
+    @NotBlank(message = "Description is required")
     @Column(name="description", nullable = false)
     private String description;
+
 
     @Column(name="supportMultiPlatform", nullable = true)
     private boolean supportMultiPlatform;
 
+    @NotNull(message = "Release date is required")
     @Column(name="releaseDate", nullable = false)
     private java.sql.Date releaseDate;
 
-
+    //cascade = CascadeType.REMOVE -> this will remove all customers associated with this antivirus
+    //fetch = FetchType.EAGER -> this will load all customers associated with this antivirus ; it is NOT lazy loading
+    @OneToMany(mappedBy = "antivirus", fetch = FetchType.EAGER)
     @JsonManagedReference
-    @OneToMany(mappedBy = "antivirus", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Customer> customerList;
 
     public Antivirus(String name, String producer, String description, boolean supportMultiPlatform, java.sql.Date releaseDate) {
@@ -54,5 +64,9 @@ public class Antivirus {
                 ", supportMultiPlatform=" + supportMultiPlatform +
                 ", releaseDate=" + releaseDate +
                 '}';
+    }
+
+    public boolean validationFails(){
+        return name == null || producer == null || description == null || releaseDate == null || name.isEmpty() || producer.isEmpty() || description.isEmpty();
     }
 }

@@ -19,7 +19,9 @@ public class CustomerServiceImpl implements ICustomerService{
     }
     @Override
     public List<Customer> getAllCustomers() {
-        return customerRepo.findAll();
+        List<Customer> customers = customerRepo.findAll();
+        System.out.println("Retrieved customers: " + customers);
+        return customers;
     }
 
     @Override
@@ -33,27 +35,33 @@ public class CustomerServiceImpl implements ICustomerService{
         return customer.get();
     }
 
-    @Override
     public void addCustomer(Customer customer) {
+        if(customer.validationFails()) {
+            System.out.println("Validation failed for Customer: " + customer);
+            return;
+        }
+        if(customer.getAntivirus() == null) {
+            customer.setAntivirus(null);
+        }
+        System.out.println("Saving Customer: " + customer);
         customerRepo.save(customer);
     }
 
     @Override
-    public void updateCustomer(Long id, Customer updatedCustomer) throws RepositoryException{
-        if(customerRepo.findById(updatedCustomer.getId()).isEmpty())
-        {
-            throw new RepositoryException("Customer not found : Update failed");
-        }
-
-        Customer customer = customerRepo.findById(id).orElse(null);
-
-        if(customer != null)
-        {
+    public Customer updateCustomer(Long id, Customer updatedCustomer) {
+        Optional<Customer> customerOptional = customerRepo.findById(id);
+        if(customerOptional.isPresent()) {
+            System.out.println("avem la ce da update");
+            Customer customer = customerOptional.get();
             customer.setFullName(updatedCustomer.getFullName());
             customer.setEmail(updatedCustomer.getEmail());
             customer.setAge(updatedCustomer.getAge());
+            customer.setAntivirus(updatedCustomer.getAntivirus());
+            System.out.println(customer);
+            return customerRepo.save(customer);
         }
-        customerRepo.save(customer);
+        System.out.println("nu avem la ce da update");
+        return null;
     }
 
     @Override
