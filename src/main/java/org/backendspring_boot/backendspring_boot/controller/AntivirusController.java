@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -76,6 +77,13 @@ public class AntivirusController {
         } catch (RepositoryException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // In AntivirusController.java
+    @GetMapping("/antivirusCustomerCount")
+    public ResponseEntity<Map<Long, Integer>> getAntivirusCustomerCount() {
+        Map<Long, Integer> antivirusCustomerCount = antivirusService.getAntivirusCustomerCount();
+        return ResponseEntity.ok(antivirusCustomerCount);
     }
 
     @MessageMapping("/broadcast")

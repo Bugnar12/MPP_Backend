@@ -1,5 +1,6 @@
 package org.backendspring_boot.backendspring_boot.entity;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -68,5 +69,30 @@ public class Antivirus {
 
     public boolean validationFails(){
         return name == null || producer == null || description == null || releaseDate == null || name.isEmpty() || producer.isEmpty() || description.isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Antivirus antivirus = (Antivirus) o;
+        return supportMultiPlatform == antivirus.supportMultiPlatform &&
+                Objects.equals(id, antivirus.id) &&
+                Objects.equals(name, antivirus.name) &&
+                Objects.equals(producer, antivirus.producer) &&
+                Objects.equals(description, antivirus.description) &&
+                Objects.equals(releaseDate, antivirus.releaseDate);
+    }
+
+    public int getNumberOfCustomers() {
+        if (this.customerList == null) {
+            return 0;
+        }
+        return this.customerList.size();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, producer, description, supportMultiPlatform, releaseDate);
     }
 }

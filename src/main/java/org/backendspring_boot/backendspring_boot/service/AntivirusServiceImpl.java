@@ -7,7 +7,9 @@ import org.backendspring_boot.backendspring_boot.repository.AntivirusRepositoryJ
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -39,7 +41,6 @@ public class AntivirusServiceImpl implements IAntivirusService {
 
     @Override
     public void updateAntivirus(Long id, Antivirus updatedAntvirus) throws RepositoryException {
-        // Check if the id is null
         if(id == null) {
             throw new IllegalArgumentException("The given id must not be null");
         }
@@ -75,6 +76,16 @@ public class AntivirusServiceImpl implements IAntivirusService {
         } else {
             throw new RepositoryException("Antivirus not found : Delete failed");
         }
+    }
+
+    // In AntivirusServiceImpl.java
+    public Map<Long, Integer> getAntivirusCustomerCount() {
+        List<Antivirus> antivirusList = this.getAllAntivirus();
+        Map<Long, Integer> antivirusCustomerCount = new HashMap<>();
+        for (Antivirus antivirus : antivirusList) {
+            antivirusCustomerCount.put(antivirus.getId(), antivirus.getNumberOfCustomers());
+        }
+        return antivirusCustomerCount;
     }
 
 }

@@ -1,131 +1,158 @@
 package org.example.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.backendspring_boot.backendspring_boot.BackendSpringBootApplication;
+import org.backendspring_boot.backendspring_boot.controller.AntivirusController;
 import org.backendspring_boot.backendspring_boot.entity.Antivirus;
 import org.backendspring_boot.backendspring_boot.service.AntivirusServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.backendspring_boot.backendspring_boot.exception.RepositoryException;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.Date;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.backendspring_boot.backendspring_boot.controller.AntivirusController;
-
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+@WebMvcTest(controllers = AntivirusController.class)
+@ContextConfiguration(classes= BackendSpringBootApplication.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class AntivirusControllerTest {
-
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private AntivirusServiceImpl antivirusService;
 
-    @InjectMocks
-    private AntivirusController antivirusController;
-
-    @BeforeEach
-    public void init(){
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(antivirusController)
-                .build();
-    }
-
     @Test
-    public void testGetAllAntiviruses() throws Exception {
-        List<Antivirus> antiviruses = Arrays.asList(
-                new Antivirus(1, "Test Antivirus 1", "Test Producer 1", "This is a test antivirus.", true, new Date()),
-                new Antivirus(2, "Test Antivirus 2", "Test Producer 2", "This is another test antivirus.", false, new Date())
-        );
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
+    public void testGetAntivirusByIdSuccess() throws Exception {
+        Long antivirusId = 1L;
+        Antivirus antivirus = new Antivirus("test", "test", "test", true, new java.sql.Date(System.currentTimeMillis()));
+        antivirus.setId(antivirusId);
 
-        when(antivirusService.getAllAntivirus()).thenReturn(antiviruses);
+        when(antivirusService.getAntivirusById(antivirusId)).thenReturn(antivirus);
 
-        mockMvc.perform(get("/antivirusList")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/antivirusList/" + antivirusId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.name", is("test")));
     }
 
     @Test
-    public void testGetAntivirusById() throws Exception {
-        Antivirus antivirus = new Antivirus(1, "Test Antivirus 1", "Test Producer 1", "This is a test antivirus.", true, new Date());
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
+    public void testGetAntivirusByIdNotFound() throws Exception {
+        Long antivirusId = -1L;
 
-        when(antivirusService.getAntivirusById(1)).thenReturn(antivirus);
+        when(antivirusService.getAntivirusById(antivirusId)).thenThrow(new RepositoryException("Antivirus not found"));
 
-        mockMvc.perform(get("/antivirusList/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/antivirusList/" + antivirusId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
+    public void testGetAllAntivirus() throws Exception {
+        Antivirus antivirus = new Antivirus("test", "test", "test", true, new java.sql.Date(System.currentTimeMillis()));
+        antivirus.setId(1L);
+
+        when(antivirusService.getAllAntivirus()).thenReturn(Collections.singletonList(antivirus));
+
+        mockMvc.perform(get("/antivirusList"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.description").value("This is a test antivirus."));
+                .andExpect(jsonPath("$[0].name", is("test")));
     }
 
     @Test
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
     public void testAddAntivirus() throws Exception {
-        Antivirus antivirus = new Antivirus(1, "Test Antivirus 1", "Test Producer 1", "This is a test antivirus.", true, new Date());
-
-        List<Antivirus> antiviruses = new ArrayList<>();
-        when(antivirusService.getAllAntivirus()).thenReturn(antiviruses);
-
-        doAnswer(invocation -> {
-            antiviruses.add(antivirus);
-            return null;
-        }).when(antivirusService).addAntivirus(any(Antivirus.class));
+        Antivirus antivirus = new Antivirus("test", "test", "test", true, new java.sql.Date(System.currentTimeMillis()));
+        antivirus.setId(1L);
 
         mockMvc.perform(post("/antivirusList")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(antivirus)))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(antivirus)))
                 .andExpect(status().isOk());
 
-        verify(antivirusService, times(1)).addAntivirus(any(Antivirus.class));
-        assertEquals(1, antiviruses.size());
+        ArgumentCaptor<Antivirus> antivirusCaptor = ArgumentCaptor.forClass(Antivirus.class);
+        verify(antivirusService, times(1)).addAntivirus(antivirusCaptor.capture());
+
+        Antivirus capturedAntivirus = antivirusCaptor.getValue();
+        assertEquals(antivirus.getId(), capturedAntivirus.getId());
+        assertEquals(antivirus.getName(), capturedAntivirus.getName());
+        assertEquals(antivirus.getProducer(), capturedAntivirus.getProducer());
+        assertEquals(antivirus.getDescription(), capturedAntivirus.getDescription());
+        assertEquals(antivirus.isSupportMultiPlatform(), capturedAntivirus.isSupportMultiPlatform());
+        assertEquals(antivirus.getReleaseDate().toString(), capturedAntivirus.getReleaseDate().toString());
     }
 
     @Test
-    public void testDeleteAntivirus() throws Exception {
-        Antivirus antivirus = new Antivirus(1, "Test Antivirus 1", "Test Producer 1", "This is a test antivirus.", true, new Date());
-
-        when(antivirusService.getAntivirusById(1)).thenReturn(antivirus);
-
-        mockMvc.perform(delete("/antivirusList/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
     public void testUpdateAntivirus() throws Exception {
-        Antivirus antivirus = new Antivirus(1, "Test Antivirus 1", "Test Producer 1", "This is a test antivirus.", true, new Date());
+        Antivirus antivirus = new Antivirus("test", "test", "test", true, new java.sql.Date(System.currentTimeMillis()));
+        antivirus.setId(1L);
 
-        when(antivirusService.getAntivirusById(1)).thenReturn(antivirus);
+        doNothing().when(antivirusService).updateAntivirus(antivirus.getId(), antivirus);
 
-        mockMvc.perform(put("/antivirusList/1")
+        mockMvc.perform(put("/antivirusList/" + antivirus.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(antivirus)))
+                        .content(objectMapper.writeValueAsString(antivirus)))
                 .andExpect(status().isOk());
+
+        ArgumentCaptor<Antivirus> antivirusCaptor = ArgumentCaptor.forClass(Antivirus.class);
+        verify(antivirusService, times(1)).updateAntivirus(eq(antivirus.getId()), antivirusCaptor.capture());
+
+        Antivirus capturedAntivirus = antivirusCaptor.getValue();
+        assertEquals(antivirus.getId(), capturedAntivirus.getId());
+        assertEquals(antivirus.getName(), capturedAntivirus.getName());
+        assertEquals(antivirus.getProducer(), capturedAntivirus.getProducer());
+        assertEquals(antivirus.getDescription(), capturedAntivirus.getDescription());
+        assertEquals(antivirus.isSupportMultiPlatform(), capturedAntivirus.isSupportMultiPlatform());
+        assertEquals(antivirus.getReleaseDate().toString(), capturedAntivirus.getReleaseDate().toString());
     }
 
     @Test
-    public void testAddAntivirusInvalid() throws Exception {
-        Antivirus antivirus = new Antivirus(1, "Test Antivirus 1", "Test Producer 1", null, true, new Date(System.currentTimeMillis() + 86400000)); // description is null and releaseDate is in the future
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
+    public void testUpdateAntivirusFailsValidator() throws Exception {
+        Antivirus antivirus = new Antivirus("", "", "", true, new java.sql.Date(System.currentTimeMillis()));
+        antivirus.setId(2L);
 
-        mockMvc.perform(post("/antivirusList")
+        doThrow(RepositoryException.class).when(antivirusService).updateAntivirus(antivirus.getId(), antivirus);
+
+        mockMvc.perform(put("/antivirusList/" + antivirus.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(antivirus)))
+                        .content(objectMapper.writeValueAsString(antivirus)))
                 .andExpect(status().isBadRequest());
     }
+    @Test
+    @WithMockUser(username = "testUser", roles = {"USER", "ADMIN"})
+    public void testDeleteAntivirus() throws Exception {
+        Long antivirusId = 1L;
+
+        doNothing().when(antivirusService).deleteAntivirus(antivirusId);
+
+        mockMvc.perform(delete("/antivirusList/" + antivirusId))
+                .andExpect(status().isOk());
+
+        verify(antivirusService, times(1)).deleteAntivirus(antivirusId);
+    }
 }
-
-

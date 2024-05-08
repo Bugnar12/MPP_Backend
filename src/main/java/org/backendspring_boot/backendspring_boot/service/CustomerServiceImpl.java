@@ -1,9 +1,14 @@
 package org.backendspring_boot.backendspring_boot.service;
 
+import jakarta.transaction.Transactional;
 import org.backendspring_boot.backendspring_boot.entity.Antivirus;
 import org.backendspring_boot.backendspring_boot.entity.Customer;
 import org.backendspring_boot.backendspring_boot.exception.RepositoryException;
+import org.backendspring_boot.backendspring_boot.repository.AntivirusRepositoryJPA;
 import org.backendspring_boot.backendspring_boot.repository.CustomerRepositoryJPA;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,15 +17,20 @@ import java.util.Optional;
 @Service
 public class CustomerServiceImpl implements ICustomerService{
     private final CustomerRepositoryJPA customerRepo;
+    private final AntivirusRepositoryJPA antivirusRepo;
+    private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
-    public CustomerServiceImpl(CustomerRepositoryJPA customerRepo)
+    @Autowired
+    public CustomerServiceImpl(CustomerRepositoryJPA customerRepo, AntivirusRepositoryJPA antivirusRepo)
     {
         this.customerRepo = customerRepo;
+        this.antivirusRepo = antivirusRepo;
     }
+
     @Override
     public List<Customer> getAllCustomers() {
         List<Customer> customers = customerRepo.findAll();
-        System.out.println("Retrieved customers: " + customers);
+        logger.info("Retrieved customers: " + customers);
         return customers;
     }
 
@@ -35,33 +45,35 @@ public class CustomerServiceImpl implements ICustomerService{
         return customer.get();
     }
 
-    public void addCustomer(Customer customer) {
-        if(customer.validationFails()) {
-            System.out.println("Validation failed for Customer: " + customer);
-            return;
+    @Transactional
+    public void addCustomer(Customer customer) throws RepositoryException{
+        logger.info("Adding customer: " + customer);
+        if(customer.validationFails()){
+            logger.error("Invalid customer data: " + customer);
+            throw new RepositoryException("Invalid customer data");
         }
-        if(customer.getAntivirus() == null) {
-            customer.setAntivirus(null);
+        Long antivirusId = customer.getAntivirus().getId();
+        if(antivirusRepo.findById(antivirusId).isEmpty()) {
+            logger.error("Antivirus not found for customer: " + customer);
+            throw new RepositoryException("Antivirus not found : Add failed");
         }
-        System.out.println("Saving Customer: " + customer);
+        logger.info("Saving Customer: " + customer);
         customerRepo.save(customer);
+        logger.info("Customer added successfully: " + customer);
     }
 
-    @Override
-    public Customer updateCustomer(Long id, Customer updatedCustomer) {
+    public Customer updateCustomer(Long id, Customer updatedCustomer) throws RepositoryException {
         Optional<Customer> customerOptional = customerRepo.findById(id);
         if(customerOptional.isPresent()) {
-            System.out.println("avem la ce da update");
             Customer customer = customerOptional.get();
             customer.setFullName(updatedCustomer.getFullName());
             customer.setEmail(updatedCustomer.getEmail());
             customer.setAge(updatedCustomer.getAge());
             customer.setAntivirus(updatedCustomer.getAntivirus());
-            System.out.println(customer);
             return customerRepo.save(customer);
+        } else {
+            throw new RepositoryException("Customer not found : Update failed");
         }
-        System.out.println("nu avem la ce da update");
-        return null;
     }
 
     @Override
@@ -70,6 +82,7 @@ public class CustomerServiceImpl implements ICustomerService{
         {
             throw new RepositoryException("Customer not found : Delete failed");
         }
+        customerRepo.deleteById(id);
     }
 
     public List<Customer> getCustomerByAntivirusId(Long antivirus_id) {

@@ -48,7 +48,11 @@ public class CustomerController {
         {
             return ResponseEntity.badRequest().build();
         }
-        customerService.addCustomer(customer);
+        try {
+            customerService.addCustomer(customer);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(customer);
     }
 
