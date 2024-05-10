@@ -1,9 +1,12 @@
 package org.backendspring_boot.backendspring_boot.controller;
 
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.backendspring_boot.backendspring_boot.entity.Customer;
+import org.backendspring_boot.backendspring_boot.exception.RepositoryException;
 import org.backendspring_boot.backendspring_boot.service.CustomerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +78,31 @@ public class CustomerController {
         try {
             customerService.deleteCustomer(id);
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/getCustomerByAntivirusIdPage/{antivirus_id}")
+    public ResponseEntity<Page<Customer>> getCustomerByAntivirusId(
+            @PathVariable Long antivirus_id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    )
+    {
+        try{
+            Page<Customer> customers = customerService.getCustomerByAntivirusId(antivirus_id, page, size);
+            return ResponseEntity.ok(customers);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/getNoOfCustomers/{antivirus_id}")
+    public ResponseEntity<Integer> getNoOfCustomersByAntivirusId(@PathVariable Long antivirus_id ) throws RepositoryException {
+        try{
+            int count = customerService.noOfCustomersByAntivirus(antivirus_id);
+            return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

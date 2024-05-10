@@ -9,6 +9,9 @@ import org.backendspring_boot.backendspring_boot.repository.CustomerRepositoryJP
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +48,7 @@ public class CustomerServiceImpl implements ICustomerService{
         return customer.get();
     }
 
+    @Override
     @Transactional
     public void addCustomer(Customer customer) throws RepositoryException{
         logger.info("Adding customer: " + customer);
@@ -62,6 +66,7 @@ public class CustomerServiceImpl implements ICustomerService{
         logger.info("Customer added successfully: " + customer);
     }
 
+    @Override
     public Customer updateCustomer(Long id, Customer updatedCustomer) throws RepositoryException {
         Optional<Customer> customerOptional = customerRepo.findById(id);
         if(customerOptional.isPresent()) {
@@ -87,5 +92,36 @@ public class CustomerServiceImpl implements ICustomerService{
 
     public List<Customer> getCustomerByAntivirusId(Long antivirus_id) {
         return customerRepo.findAllByAntivirusId(antivirus_id);
+    }
+
+    @Override
+    public Page<Customer> getCustomerByAntivirusId(Long antivirus_id, int page, int size) throws RepositoryException{
+        logger.info("Getting customers by antivirus id: " + antivirus_id);
+
+        if (antivirus_id == null) {
+            logger.error("Antivirus id is null");
+            throw new IllegalArgumentException("Antivirus id cannot be null");
+        }
+
+        if (antivirusRepo.findById(antivirus_id).isEmpty()) {
+            logger.error("No antivirus found with id: " + antivirus_id);
+            throw new RepositoryException("No antivirus found with id: " + antivirus_id);
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Customer> customers = customerRepo.findAllByAntivirusId(antivirus_id, pageable);
+
+        logger.info("Retrieved customers: " + customers.getContent());
+
+        return customers;
+    }
+    @Override
+    public int noOfCustomersByAntivirus(Long id) throws RepositoryException {
+        if(antivirusRepo.findById(id).isEmpty())
+            throw new RepositoryException();
+        else
+        {
+            return customerRepo.noOfCustomersByAntivirus(id);
+        }
     }
 }
