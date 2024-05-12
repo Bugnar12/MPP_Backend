@@ -12,23 +12,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CustomerServiceImpl implements ICustomerService{
     private final CustomerRepositoryJPA customerRepo;
     private final AntivirusRepositoryJPA antivirusRepo;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
     private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepositoryJPA customerRepo, AntivirusRepositoryJPA antivirusRepo)
+    public CustomerServiceImpl(CustomerRepositoryJPA customerRepo, AntivirusRepositoryJPA antivirusRepo, SimpMessagingTemplate messagingTemplate)
     {
         this.customerRepo = customerRepo;
         this.antivirusRepo = antivirusRepo;
+        this.messagingTemplate = messagingTemplate;
     }
+
 
     @Override
     public List<Customer> getAllCustomers() {
