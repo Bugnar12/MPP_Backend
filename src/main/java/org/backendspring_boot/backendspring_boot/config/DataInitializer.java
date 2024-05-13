@@ -5,11 +5,13 @@ import org.backendspring_boot.backendspring_boot.entity.CustomerMockFaker;
 import org.backendspring_boot.backendspring_boot.service.CustomerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@Profile("dev")
 public class DataInitializer implements CommandLineRunner {
 
     private final CustomerServiceImpl customerService;

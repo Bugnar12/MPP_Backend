@@ -86,6 +86,12 @@ public class AntivirusController {
         return ResponseEntity.ok(antivirusCustomerCount);
     }
 
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        System.out.println("The server has been pinged");
+        return ResponseEntity.ok("Ping successful");
+    }
+
     @MessageMapping("/broadcast")
     @SendTo("/topic/reply")
     public String broadcastMessage(@Payload String message) {
