@@ -9,5 +9,6 @@ public interface IUserService {
     User getUserById(Long id) throws RepositoryException;
     User getUserByUsername(String username);
     User getUserByEmail(String email);
-    void addUser(User user) throws NoSuchAlgorithmException;
+    void addUser(User user) throws RepositoryException;
+    void login(User user) throws RepositoryException;
 }
