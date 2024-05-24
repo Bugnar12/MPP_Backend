@@ -1,8 +1,9 @@
-package org.backendspring_boot.backendspring_boot.service;
+package org.example.service;
 
 import org.backendspring_boot.backendspring_boot.entity.User;
 import org.backendspring_boot.backendspring_boot.exception.RepositoryException;
 import org.backendspring_boot.backendspring_boot.repository.UserRepositoryJPA;
+import org.backendspring_boot.backendspring_boot.service.UserServiceImpl;
 import org.backendspring_boot.backendspring_boot.utils.LoginRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
