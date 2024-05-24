@@ -1,13 +1,9 @@
 package org.backendspring_boot.backendspring_boot.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -19,17 +15,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @NotNull
-    @Email
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    @Size(min = 6)
     private String password;
 
     @Column(nullable = false, unique = true)
-    @Size(min = 4)
     private String username;
 
     ///constructor used when a user will register
