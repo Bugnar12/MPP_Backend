@@ -5,14 +5,11 @@ import jakarta.validation.Valid;
 import org.backendspring_boot.backendspring_boot.entity.User;
 import org.backendspring_boot.backendspring_boot.service.IUserService;
 import org.backendspring_boot.backendspring_boot.service.JWTGeneratorService;
-import org.backendspring_boot.backendspring_boot.service.LoginRequest;
-import org.backendspring_boot.backendspring_boot.service.UserServiceImpl;
+import org.backendspring_boot.backendspring_boot.utils.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -54,13 +51,14 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid User user) {
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest loginRequest) {
+        User user;
         try{
-            userService.login(user);
+            user = userService.login(loginRequest);
         }
         catch(Exception e)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found or invalid password!");
         }
 
         String jsonWebToken = jwtGeneratorService.generateJWT(user);

@@ -1,4 +1,4 @@
-package org.backendspring_boot.backendspring_boot;
+package org.backendspring_boot.backendspring_boot.config;
 
 import org.backendspring_boot.backendspring_boot.entity.Customer;
 import org.backendspring_boot.backendspring_boot.entity.CustomerMockFaker;

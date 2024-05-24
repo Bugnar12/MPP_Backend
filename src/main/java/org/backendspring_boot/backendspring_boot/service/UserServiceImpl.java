@@ -3,6 +3,7 @@ package org.backendspring_boot.backendspring_boot.service;
 import org.backendspring_boot.backendspring_boot.entity.User;
 import org.backendspring_boot.backendspring_boot.exception.RepositoryException;
 import org.backendspring_boot.backendspring_boot.repository.UserRepositoryJPA;
+import org.backendspring_boot.backendspring_boot.utils.LoginRequest;
 import org.backendspring_boot.backendspring_boot.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -59,15 +60,17 @@ public class UserServiceImpl implements IUserService{
         }
     }
 
-    public void login(User user) throws RepositoryException {
-        User userfromDB = userRepository.findByUsername(user.getUsername());
-        if(userfromDB == null)
+    @Override
+    public User login(LoginRequest loginRequest) throws RepositoryException {
+        User userfromDB = userRepository.findByUsername(loginRequest.getUsername());
+        if(userfromDB == null || userfromDB.getId() == null)
         {
             throw new RepositoryException("User not found!");
         }
-        if(!passwordEncoder.matches(user.getPassword(), userfromDB.getPassword()))
+        if(!passwordEncoder.matches(loginRequest.getPassword(), userfromDB.getPassword()))
         {
             throw new RepositoryException("Invalid password!");
         }
+        return userfromDB;
     }
 }

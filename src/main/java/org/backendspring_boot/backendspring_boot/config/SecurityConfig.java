@@ -21,6 +21,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    //implementation for the PasswordEncoder
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

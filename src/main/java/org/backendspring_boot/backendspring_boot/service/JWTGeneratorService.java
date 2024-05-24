@@ -1,6 +1,7 @@
 package org.backendspring_boot.backendspring_boot.service;
 
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.backendspring_boot.backendspring_boot.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import io.jsonwebtoken.Jwts;
@@ -12,17 +13,16 @@ import java.util.UUID;
 
 @Service
 public class JWTGeneratorService {
-    private final String hashingKey;
+    private final Key key;
 
     public JWTGeneratorService(@Value("${jwt.key}") String hashingKey)
     {
-        this.hashingKey = hashingKey;
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     public String generateJWT(User user)
     {
         Long id = user.getId();
-        Key key = new SecretKeySpec(hashingKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
 
         return Jwts.builder()
                 .setSubject(id.toString())
