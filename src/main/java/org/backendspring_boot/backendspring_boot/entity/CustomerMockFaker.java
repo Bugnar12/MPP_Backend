@@ -11,7 +11,6 @@ import java.util.Random;
 
 @Component
 public class CustomerMockFaker {
-
     private final AntivirusServiceImpl antivirusService;
 
     @Autowired

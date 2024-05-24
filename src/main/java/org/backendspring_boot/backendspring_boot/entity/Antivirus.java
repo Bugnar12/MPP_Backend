@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "Antivirus")
 public class Antivirus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
