@@ -1,6 +1,5 @@
 package org.backendspring_boot.backendspring_boot.repository;
 
-import org.backendspring_boot.backendspring_boot.entity.Antivirus;
 import org.backendspring_boot.backendspring_boot.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

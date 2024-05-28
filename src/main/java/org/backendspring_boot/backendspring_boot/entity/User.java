@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "Users") ///"Users" beacause User is reserved in SQL Server
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

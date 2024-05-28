@@ -6,8 +6,11 @@ import org.backendspring_boot.backendspring_boot.repository.UserRepositoryJPA;
 import org.backendspring_boot.backendspring_boot.utils.LoginRequest;
 import org.backendspring_boot.backendspring_boot.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.core.RepositoryCreationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -16,11 +19,13 @@ import java.security.NoSuchAlgorithmException;
 public class UserServiceImpl implements IUserService{
 
     private final UserRepositoryJPA userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepositoryJPA userRepository)
+    public UserServiceImpl(UserRepositoryJPA userRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     @Override
     public User getUserById(Long id) throws RepositoryException {
@@ -40,16 +45,19 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public void addUser(User user) throws NoSuchAlgorithmException {
+    public void addUser(User user) throws RepositoryException {
         try {
-            String hashedPassword = PasswordUtils.hashPassword(user.getPassword());
-            user.setPassword(hashedPassword);
+            if (userRepository.findByUsername(user.getUsername()) != null) {
+                throw new RepositoryException("Username already exists");
+            }
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
         }
-        catch(NoSuchAlgorithmException e)
-        {
+        catch(DataIntegrityViolationException e) {
+            throw new RepositoryException("Username already exists!");
+        }
+    }
 
-<<<<<<< HEAD
     @Override
     public User login(LoginRequest loginRequest) throws RepositoryException {
         User userfromDB = userRepository.findByUsername(loginRequest.getUsername());
@@ -60,9 +68,6 @@ public class UserServiceImpl implements IUserService{
         if(!passwordEncoder.matches(loginRequest.getPassword(), userfromDB.getPassword()))
         {
             throw new RepositoryException("Invalid password!");
-=======
-            e.printStackTrace();
->>>>>>> parent of 023a057 (refactoring authentication + jwt implementation)
         }
         return userfromDB;
     }

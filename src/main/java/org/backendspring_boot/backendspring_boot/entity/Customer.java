@@ -14,9 +14,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "Customer", indexes = {
-        @Index(name = "idx_antivirus", columnList= "antivirus_id")
-})
+@Table(name = "Customer")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

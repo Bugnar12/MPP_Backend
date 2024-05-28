@@ -1,14 +1,12 @@
 package org.backendspring_boot.backendspring_boot.controller;
 
 
+import jakarta.validation.Valid;
 import org.backendspring_boot.backendspring_boot.entity.User;
 import org.backendspring_boot.backendspring_boot.service.IUserService;
-<<<<<<< HEAD
 import org.backendspring_boot.backendspring_boot.service.JWTGeneratorService;
 import org.backendspring_boot.backendspring_boot.utils.LoginRequest;
-=======
 import org.backendspring_boot.backendspring_boot.service.UserServiceImpl;
->>>>>>> parent of 023a057 (refactoring authentication + jwt implementation)
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     private IUserService userService;
+    private JWTGeneratorService jwtGeneratorService;
 
     @Autowired
     public UserController(IUserService userService)
     {
         this.userService = userService;
+
     }
 
     @GetMapping("/{id}")
@@ -48,7 +48,6 @@ public class UserController {
         }
     }
 
-<<<<<<< HEAD
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid LoginRequest loginRequest) {
@@ -64,6 +63,4 @@ public class UserController {
         String jsonWebToken = jwtGeneratorService.generateJWT(user);
         return ResponseEntity.ok().body(jsonWebToken);
     }
-=======
->>>>>>> parent of 023a057 (refactoring authentication + jwt implementation)
 }
