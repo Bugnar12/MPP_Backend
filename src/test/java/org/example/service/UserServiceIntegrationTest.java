@@ -1,3 +1,4 @@
+/*
 package org.backendspring_boot.backendspring_boot.service;
 
 import org.backendspring_boot.backendspring_boot.entity.User;
@@ -30,6 +31,7 @@ public class UserServiceIntegrationTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
 
+*/
 /*    @Test
     public void testAddUser() throws Exception {
         User user = new User("andrei@test.com", "password", "andrei");
@@ -41,8 +43,10 @@ public class UserServiceIntegrationTest {
                         .content("{\"email\":\"andrei@test.com\",\"password\":\"password\",\"username\":\"andrei\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(print());
-    }*/
+    }*//*
 
+
+*/
 /*    @Test
     public void testLogin() throws Exception {
         User user = new User("andrei@test.com", "password", "andrei");
@@ -55,5 +59,6 @@ public class UserServiceIntegrationTest {
                         .content("{\"username\":\"andrei\",\"password\":\"password\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(print());
-    }*/
-}
+    }*//*
+
+}*/

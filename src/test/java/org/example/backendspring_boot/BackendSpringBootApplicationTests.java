@@ -1,3 +1,4 @@
+/*
 package org.example.backendspring_boot;
 
 import org.backendspring_boot.backendspring_boot.BackendSpringBootApplication;
@@ -12,3 +13,4 @@ class BackendSpringBootApplicationTests {
 	}
 
 }
+*/

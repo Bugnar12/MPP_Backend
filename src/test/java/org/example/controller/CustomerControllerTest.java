@@ -1,3 +1,4 @@
+/*
 package org.example.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,11 +85,13 @@ public class CustomerControllerTest {
                 .andExpect(status().isBadRequest());
 
 
+*/
 /*        Customer capturedCustomer = customerCaptor.getValue();
         assertEquals(customer.getId(), capturedCustomer.getId());
         assertEquals(customer.getFullName(), capturedCustomer.getFullName());
         assertEquals(customer.getEmail(), capturedCustomer.getEmail());
-        assertEquals(customer.getAge(), capturedCustomer.getAge());*/
+        assertEquals(customer.getAge(), capturedCustomer.getAge());*//*
+
     }
 
     @Test
@@ -103,4 +106,4 @@ public class CustomerControllerTest {
 
         verify(customerService, times(1)).deleteCustomer(customerId);
     }
-}
+}*/

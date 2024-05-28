@@ -1,6 +1,0 @@
-org\example\backendspring_boot\BackendSpringBootApplicationTests.class
-org\example\service\AntivirusServiceTest.class
-org\example\service\UserServiceTest.class
-org\example\controller\AntivirusControllerTest.class
-org\example\controller\CustomerControllerTest.class
-org\backendspring_boot\backendspring_boot\service\UserServiceIntegrationTest.class
