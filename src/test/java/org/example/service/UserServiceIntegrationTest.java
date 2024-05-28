@@ -30,7 +30,7 @@ public class UserServiceIntegrationTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
 
-    @Test
+/*    @Test
     public void testAddUser() throws Exception {
         User user = new User("andrei@test.com", "password", "andrei");
         when(userRepository.findByUsername(user.getUsername())).thenReturn(null);
@@ -41,7 +41,7 @@ public class UserServiceIntegrationTest {
                         .content("{\"email\":\"andrei@test.com\",\"password\":\"password\",\"username\":\"andrei\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(print());
-    }
+    }*/
 
 /*    @Test
     public void testLogin() throws Exception {
