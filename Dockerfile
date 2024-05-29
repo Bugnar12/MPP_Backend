@@ -1,9 +1,9 @@
-FROM maven:4.0.0-openjdk-21 as build
+FROM maven:3.8.4-openjdk-11 as build
 WORKDIR /app
 COPY . .
 RUN mvn clean package
 
-FROM openjdk:21-jdk
+FROM openjdk:11-jdk
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
