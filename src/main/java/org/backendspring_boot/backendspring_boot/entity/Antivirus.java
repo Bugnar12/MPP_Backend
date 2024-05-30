@@ -44,7 +44,7 @@ public class Antivirus {
 
     //cascade = CascadeType.REMOVE -> this will remove all customers associated with this antivirus
     //fetch = FetchType.EAGER -> this will load all customers associated with this antivirus ; it is NOT lazy loading
-    @OneToMany(mappedBy = "antivirus", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "antivirus", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<Customer> customerList;
 
