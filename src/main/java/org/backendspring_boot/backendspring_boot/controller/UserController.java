@@ -24,7 +24,7 @@ public class UserController {
     private IRoleService roleService;
 
     @Autowired
-    public UserController(IUserService userService, JWTGeneratorService jwtGeneratorService, IRoleService)
+    public UserController(IUserService userService, JWTGeneratorService jwtGeneratorService, IRoleService roleService)
     {
         this.userService = userService;
         this.jwtGeneratorService = jwtGeneratorService;

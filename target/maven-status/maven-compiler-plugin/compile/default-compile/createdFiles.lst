@@ -1,7 +1,12 @@
+org\backendspring_boot\backendspring_boot\repository\RoleRepositoryJPA.class
 org\backendspring_boot\backendspring_boot\service\CustomerServiceImpl.class
+org\backendspring_boot\backendspring_boot\dto\UserDTO.class
+org\backendspring_boot\backendspring_boot\service\RoleService.class
 org\backendspring_boot\backendspring_boot\service\UserServiceImpl.class
 org\backendspring_boot\backendspring_boot\config\NoSecurityConfig.class
+org\backendspring_boot\backendspring_boot\entity\Role.class
 org\backendspring_boot\backendspring_boot\entity\CustomerMockFaker.class
+org\backendspring_boot\backendspring_boot\service\IRoleService.class
 org\backendspring_boot\backendspring_boot\utils\PasswordUtils.class
 org\backendspring_boot\backendspring_boot\config\WebSocketConfig.class
 org\backendspring_boot\backendspring_boot\entity\Customer.class
